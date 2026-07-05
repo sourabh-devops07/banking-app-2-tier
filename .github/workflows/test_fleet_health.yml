@@ -17,20 +17,27 @@ jobs:
           role-to-assume: arn:aws:iam::720800607391:role/github-action-deploy-role  # yha khud ka dalna arn number ye ni h mera ok chnge krna
           aws-region: us-east-1
 
-      - name: Print Private IPs
+      - name: Print Priva
         run: |
           CMD_ID=$(aws ssm send-command \
-            --targets "key=tag:App,Values=flask" \
+            --targets "Key=tag:App,Values=flask" \
             --document-name "AWS-RunShellScript" \
-            --parameters '{"commands":["hostname -I"]}' \
-            --query 'Commands.CommandId' \
-            --output text
-          )
+            --parameters '{"commands":["hostname -I", "docker --version" 2>/de/null || echo "Docker not installed",
+             "aws --version 2>/de/null || echo "AWS CLI not installed"", "mysql --version 2>/de/null || echo "MySQL not installed""
+             "aws ssm get-parameter-by-path --path /appliccation/banking --with-decryption --region us-east-1"]}' \
+            --query 'Command.CommandId' \
+            --output text --region us-east-1)
+            
+            echo "cmd_id: $CMD_ID" >> $GITHUB_OUTPUT
 
-          sleep 30
+            name: Show Results
+            id: health
+          
+            sleep 30
 
           aws ssm list-command-invocations \
-            --command-id "$CMD_ID" \
-            --details \
+            --command-id "&{{steps.health.outputs.cmd_id}}" --details \
+            --region us-east-1
             --query "CommandInvocations[*].{Instance:InstanceId,IP:CommandPlugins[0].Output}" \
             --output table
+            )
