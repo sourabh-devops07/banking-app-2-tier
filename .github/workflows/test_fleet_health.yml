@@ -16,7 +16,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::<YOUR_ACCOUNT_ID>:role/github-action-deploy-role
+          role-to-assume: arn:aws:iam::118107592194:role/github-action-deploy-role
           aws-region: us-east-1
 
       - name: Fleet Health Checks
@@ -27,7 +27,7 @@ jobs:
             --targets "Key=tag:App,Values=flask" \
             --document-name "AWS-RunShellScript" \
             --parameters '{
-              "commands":[
+              "commands": [
                 "hostname -I",
                 "docker --version 2>/dev/null || echo Docker not installed",
                 "aws --version 2>/dev/null || echo AWS CLI not installed",
