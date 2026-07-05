@@ -20,7 +20,7 @@ jobs:
       id-token: write
       contents: read
 
-  Smoke_test:
+  smoke_testing:
     needs: test_fleet_health_envs
     uses: ./.github/workflows/smoke_test.yml
     permissions:
@@ -28,7 +28,7 @@ jobs:
       contents: read
 
   build_push:
-    needs: Smoke_test
+    needs: smoke_testing
     uses: ./.github/workflows/build_push.yml
     permissions:
       id-token: write
