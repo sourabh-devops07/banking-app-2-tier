@@ -16,7 +16,7 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::118107592194:role/sourabh07-create-new-policy
+          role-to-assume: arn:aws:iam::118107592194:role/github-action-deploy-role
           aws-region: us-east-1
 
       - name: Fleet Health Check
