@@ -1,7 +1,7 @@
 name: Building and Testing Connection
 
 on:
-  workflow_dispatch
+  workflow_call:
 
 jobs:
   working-job:

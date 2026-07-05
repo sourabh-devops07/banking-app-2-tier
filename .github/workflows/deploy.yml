@@ -1,7 +1,7 @@
 name: Deploy Application on Environment
 
 on:
-  workflow_dispatch
+  workflow_call:
 
 jobs:
   working-job:

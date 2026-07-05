@@ -6,7 +6,7 @@ on:
       - main
     workflow_dispatch:
 jobs:
- verify_connection:
+   verify_connection:
    uses: ./.github/workflows/test_connection.yml
    permissions:
      id-token: write
@@ -15,28 +15,28 @@ jobs:
 test_fleet_health_envs:
   needs: verify_connection
   uses: ./.github/workflows/test_fleet_health.yml
-  Permissions:
+  permissions:
     id-token: write
     contents: read
 
 Smoke_test:
   needs: test_fleet_health_envs
   uses: ./.github/workflows/smoke_test.yml
-  Permissions:
+  permissions:
     id-token: write
     contents: read  
 
 
 build_push:
-  needs: Smoke_testing
+  needs: Smoke_test
   uses: ./.github/workflows/build_push.yml
-  Permissions:
+  permissions:
     id-token: write
     contents: read
 
 deploying:
-  needs: Smoke_testing
+  needs: Smoke_test
   uses: ./.github/workflows/deploy.yml
-  Permissions:
+  permissions:
     id-token: write
     contents: read    
