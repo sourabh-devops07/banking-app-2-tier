@@ -1,0 +1,12 @@
+name: Building and Testing Connection
+
+on:
+  workflow_dispatch
+
+jobs:
+  working-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Echo Message
+        run: echo "Build and Push successfully ✅"

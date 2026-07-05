@@ -1,0 +1,12 @@
+name: Smoke Test for Pipeline
+
+on:
+  workflow_dispatch
+
+jobs:
+  working-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Echo Message
+        run: echo "Smoke and Push successfully ✅"

@@ -1,9 +1,7 @@
-name: Test Workflow
+name: Test Connection For Pipeline
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch
 
 jobs:
   working-job:
