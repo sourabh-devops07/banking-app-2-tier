@@ -4,9 +4,8 @@ on:
   workflow_call:
 
 jobs:
-  working-job:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Echo Message
-        run: echo "GitHub Action is working successfully ✅"
+  verify_connection:
+    uses: ./.github/workflows/test_connection.yml
+    permissions:
+      id-token: write
+      contents: read
