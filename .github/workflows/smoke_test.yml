@@ -21,11 +21,25 @@ jobs:
           role-to-assume: arn:aws:iam::118107592194:role/github-action-deploy-role
           aws-region: us-east-1
 
+      - name: Validate Target Instances
+        shell: bash
+        run: |
+          INSTANCE_COUNT=$(aws ssm describe-instance-information \
+            --filters "Key=tag:App,Values=flask" \
+            --query "length(InstanceInformationList)" \
+            --output text \
+            --region us-east-1)
+
+          echo "Instances found: $INSTANCE_COUNT"
+
+          if [ "$INSTANCE_COUNT" -eq 0 ]; then
+            echo "❌ No EC2 instances found with tag App=flask"
+            exit 1
+          fi
+
       - name: Upload smoke_test.py to S3
         run: |
-          aws s3 cp smoke_test.py \
-            s3://blogging-2026-sour/smoke_test.py \
-            --region us-east-1
+          aws s3 cp smoke_test.py s3://blogging-2026-sour/smoke_test.py --region us-east-1
 
       - name: Execute Smoke Test on Fleet
         id: smoke
@@ -45,29 +59,49 @@ jobs:
             --region us-east-1)
 
           echo "cmd_id=$CMD_ID" >> $GITHUB_OUTPUT
+          echo "Command ID: $CMD_ID"
 
-      - name: Wait for Completion
-        run: sleep 30
-
-      - name: Show Results
+      - name: Wait for SSM Execution
         shell: bash
         run: |
+          CMD_ID="${{ steps.smoke.outputs.cmd_id }}"
+
+          STATUS="InProgress"
+
+          while [[ "$STATUS" == "InProgress" || "$STATUS" == "Pending" || "$STATUS" == "Delayed" ]]; do
+            STATUS=$(aws ssm list-command-invocations \
+              --command-id "$CMD_ID" \
+              --query "CommandInvocations[0].Status" \
+              --output text \
+              --region us-east-1)
+
+            echo "Current Status: $STATUS"
+            sleep 5
+          done
+
+      - name: Show Results & Validate
+        shell: bash
+        run: |
+          CMD_ID="${{ steps.smoke.outputs.cmd_id }}"
+
           aws ssm list-command-invocations \
-            --command-id "${{ steps.smoke.outputs.cmd_id }}" \
+            --command-id "$CMD_ID" \
             --details \
             --region us-east-1 \
             --output table
 
           FAILED=$(aws ssm list-command-invocations \
-            --command-id "${{ steps.smoke.outputs.cmd_id }}" \
+            --command-id "$CMD_ID" \
             --details \
-            --query "length(CommandInvocations[?Status=='Failed'])" \
+            --query "length(CommandInvocations[?Status=='Failed' || Status=='TimedOut' || Status=='Cancelled'])" \
             --output text \
             --region us-east-1)
 
+          echo "Failed count: $FAILED"
+
           if [ "$FAILED" -gt 0 ]; then
-            echo "❌ Smoke Test Failed"
+            echo "❌ Smoke Test FAILED"
             exit 1
           fi
 
-          echo "✅ Smoke Test Passed"
+          echo "✅ Smoke Test PASSED"
