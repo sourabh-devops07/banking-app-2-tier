@@ -26,3 +26,7 @@ jobs:
           aws s3 cp smoke_test.py s3://118107592194-devops-scripts/init.sql
           aws s3 cp init.py s3://118107592194-devops-scripts/init.py
           echo "Files Uploaded to bucket successfully.... ✅"
+
+      - name: Initialize Database on RDS using Ec2
+        run: |
+          
