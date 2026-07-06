@@ -25,7 +25,7 @@ if missing:
 
 # DB FIND banking_db and show tables
 try:
-    connection = pymysql.connect(
+    connection=pymysql.connect(
         host=params["DB_HOST"],
         user=params["DB_USER"],
         password=params["DB_PASSWORD"],
@@ -34,16 +34,15 @@ try:
         connect_timeout=10
     )
 
-    cur = connection.cursor()
+    cur=connection.cursor()
     cur.execute("SHOW TABLES")
-    tables = [row[0] for row in cur.fetchall()]
+    tables=[row[0] for row in cur.fetchall()]
     connection.close()
-
-    print("Database :", params["DB_NAME"])
-    print("Tables :", tables)
+    print(f"{params["DB_NAME"]}")
+    print(f"Table : {tables}")
 
 except Exception as e:
-    print("DB ERROR ❌:", e)
+    print("DB ERROR ❌: ",e)
     sys.exit(1)
 
 print("✅ Smoke test Done")
