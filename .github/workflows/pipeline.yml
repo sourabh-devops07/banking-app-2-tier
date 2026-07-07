@@ -1,10 +1,10 @@
 name: Main Pipeline for Orchestrate
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   verify_connection:
@@ -12,6 +12,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
+
 
   # smoke_testing:
   #   needs: verify_connection
