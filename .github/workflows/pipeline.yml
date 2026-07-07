@@ -1,11 +1,10 @@
 name: Main Pipeline for Orchestrate
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   verify_connection:
@@ -14,7 +13,6 @@ jobs:
       id-token: write
       contents: read
 
-
   # smoke_testing:
   #   needs: verify_connection
   #   uses: ./.github/workflows/smoke_test.yml
@@ -22,9 +20,8 @@ jobs:
   #     id-token: write
   #     contents: read
 
- 
   deploying:
-    needs: veryfy_connection
+    needs: verify_connection
     uses: ./.github/workflows/deploy.yml
     permissions:
       id-token: write
