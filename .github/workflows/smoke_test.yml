@@ -1,4 +1,4 @@
-nname: Smoke Testing For Infra and Networking
+name: Smoke Testing For Infra and Networking
 
 on:
   workflow_dispatch:
